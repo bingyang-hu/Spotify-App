@@ -1,4 +1,4 @@
-const querystring = require('querystring');
+const querystring = require('query-string');
 
 const axios = require('axios');
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -49,23 +49,23 @@ app.listen(port, () => {
     const scope = 'user-read-private user-read-email';
   
     const queryParams = querystring.stringify({
-      client_id: CLIENT_ID,
+      client_id: process.env.CLIENT_ID,
       response_type: 'code',
-      redirect_uri: REDIRECT_URI,
+      redirect_uri: process.env.REDIRECT_URI,
       state: state,
       scope: scope,
     });
   
     res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
   });
-    console.log(queryParams);
+    
   app.get('/callback', (req, res) => {
     const code = req.query.code || null;
   
     axios({
       method: 'post',
       url: 'https://accounts.spotify.com/api/token',
-      data: URLSearchParams.stringify({
+      data: querystring.stringify({
         grant_type: 'authorization_code',
         code: code,
         redirect_uri: REDIRECT_URI

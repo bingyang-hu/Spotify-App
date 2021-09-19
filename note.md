@@ -5,3 +5,31 @@
 + 'Expressapp listenning at' .... vs. new web browser showing 'log into Spofity'.
 
 + gitignore file 
+
+
++ When I write codes like these:
+```
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URI = process.env.REDIRECT_URI;
+```
+CLIENT_ID is undifined, that's the reaon why web shows that missing CLIENT_ID. 
+
+So I changed:
+```
+app.get('/login', (req, res) => {
+    const state = generateRandomString(16);
+    res.cookie(stateKey, state);
+  
+    const scope = 'user-read-private user-read-email';
+  
+    const queryParams = querystring.stringify({
+      client_id: process.env.CLIENT_ID,
+      response_type: 'code',
+      redirect_uri: process.env.REDIRECT_URI,
+      state: state,
+      scope: scope,
+    });
+```
+
+Rather than client_id : CLIENT_ID, I use client_id :process.env.CLIENT_ID

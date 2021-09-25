@@ -78,7 +78,7 @@ app.listen(port, () => {
     .then(response => {
         if (response.status === 200) {
     
-          const { access_token, refresh_token } = response.data;
+          const { access_token, refresh_token, expires_in } = response.data;
     
         //   axios.get('https://api.spotify.com/v1/me', {
         //     headers: {
@@ -94,6 +94,7 @@ app.listen(port, () => {
         const queryParams = querystring.stringify({
           access_token,
           refresh_token,
+          expires_in,
         });
 
         res.redirect(`http://localhost:3000/?${queryParams}`);

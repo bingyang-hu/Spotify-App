@@ -11,6 +11,7 @@ import {
 } from 'react-router-dom';
 import { GlobalStyle } from './styles';
 import styled from 'styled-components/macro';
+import { Login, Profile } from './pages';
 
 
 

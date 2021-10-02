@@ -33,3 +33,17 @@ app.get('/login', (req, res) => {
 ```
 
 Rather than client_id : CLIENT_ID, I use client_id :process.env.CLIENT_ID
+
++ When styling UI -The profile page:
+Error: Unhandled Rejection (TypeError): Cannot read properties of undefined (reading 'data')
+
+Solution:  In **Profile.js**
+Wrong codes :
+```javascript
+const {userProfile} = await getCurrentUserProfile();
+```
+
+Correct:
+```javascript
+const userProfile = await getCurrentUserProfile();
+```

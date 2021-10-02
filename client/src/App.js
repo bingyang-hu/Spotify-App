@@ -15,6 +15,7 @@ import { Login, Profile } from './pages';
 
 
 
+
 const StyledLoginButton = styled.a`
   background-color: var(--green);
   color: var(--white);
@@ -65,9 +66,7 @@ function App() {
       <GlobalStyle />
       <header className="App-header">
        {!token ? (
-       <StyledLoginButton href="http://localhost:8888/login">
-          Log in to Spotify
-        </StyledLoginButton>
+       <Login />
        ) : (
         <Router>
           <ScrollToTop />

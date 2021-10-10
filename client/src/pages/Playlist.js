@@ -2,22 +2,18 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { catchErrors } from '../utils'
-import { getPlaylistById } from '../spotify';
+import { getPlaylistById,getAudioFeaturesForTracks } from '../spotify';
 import { TrackList, SectionWrapper } from '../components';
 import { StyledHeader } from '../styles';
 
-const tracksForTracklist = useMemo(() => {
-  if (!tracks) {
-    return;
-  }
-  return tracks.map(({ track }) => track);
-}, [tracks]);
+
 
 const Playlist = () => {
   const { id } = useParams();
   const [playlist, setPlaylist] = useState(null);
   const [tracksData, setTracksData] = useState(null);
   const [tracks, setTracks] = useState(null);
+  const [audioFeatures, setAudioFeatures] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,7 +46,46 @@ const Playlist = () => {
     ]));
 
     catchErrors(fetchMoreData());
-  }, [tracksData]);
+  
+    const fetchAudioFeatures = async () => {
+      const ids = tracksData.items.map(({ track }) => track.id).join(',');
+      const { data } = await getAudioFeaturesForTracks(ids);
+      setAudioFeatures(audioFeatures => ([
+        ...audioFeatures ? audioFeatures : [],
+        ...data['audio_features']
+      ]));
+    };
+    catchErrors(fetchAudioFeatures());
+  
+    
+    }, [tracksData]);
+
+  
+   // Also update the audioFeatures state variable using the track IDs
+   
+
+  const tracksWithAudioFeatures = useMemo(() => {
+    if (!tracks || !audioFeatures) {
+      return null;
+    }
+
+    return tracks.map(({ track }) => {
+      const trackToAdd = track;
+
+      if (!track.audio_features) {
+        const audioFeaturesObj = audioFeatures.find(item => {
+          if (!item || !track) {
+            return null;
+          }
+          return item.id === track.id;
+        });
+
+        trackToAdd['audio_features'] = audioFeaturesObj;
+      }
+
+      return trackToAdd;
+    });
+  }, [tracks, audioFeatures]);
 
   return (
     <>
@@ -76,8 +111,8 @@ const Playlist = () => {
 
           <main>
             <SectionWrapper title="Playlist" breadcrumb={true}>
-            {tracksForTracklist && (
-                <TrackList tracks={tracksForTracklist} />
+            {tracksWithAudioFeatures && (
+                <TrackList tracks={tracksWithAudioFeatures} />
               )}
             </SectionWrapper>
           </main>
@@ -86,5 +121,7 @@ const Playlist = () => {
     </>
   )
 }
+
+
 
 export default Playlist;

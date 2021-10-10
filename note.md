@@ -47,3 +47,32 @@ Correct:
 ```javascript
 const userProfile = await getCurrentUserProfile();
 ```
++ In individual playlist page, when creating a memorized array of trakcs.
+
+``` javascript
+const tracksForTracklist = useMemo(() => {
+    if (!tracks) {
+      return;
+    }
+    return tracks.map(({ track }) => track);
+  }, [tracks]);
+```
+
+This part of codes cannot be placed randomly, it must be put right behind :
+``` javascript
+    setTracks(tracks => ([
+      ...tracks ? tracks : [],
+      ...tracksData.items
+    ]));
+
+    catchErrors(fetchMoreData());
+  }, [tracksData]);
+
+  const tracksForTracklist = useMemo(() => {
+    if (!tracks) {
+      return;
+    }
+    return tracks.map(({ track }) => track);
+  }, [tracks]);
+
+```
